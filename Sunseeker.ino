@@ -6,10 +6,15 @@
  * 14.04.2020 by pgroon
  */
 
-int leftEye = A10;
-int rightEye = A11;
+#include <Servo.h>
+
+Servo myservo;
+int leftEye = A0;
+int rightEye = A1;
+int pos = 90;   // Servo position
 double valueLeft;
 double valueRight;
+double ratioLR;
 
 void setup() {
   // Initialize photocells
@@ -18,18 +23,29 @@ void setup() {
 
   // Initialize serial monitor
   Serial.begin(9600);
+
+  // Initialize Servo
+  myservo.attach(52);
 }
 
 void loop() {
   valueLeft   = analogRead(leftEye);
   valueRight  = analogRead(rightEye);
  
-  Serial.print("leftEye: ");
-  Serial.println(valueLeft);
-  Serial.print("rightEye: ");
-  Serial.println(valueRight);
-  Serial.print("Ratio: ");
-  Serial.println(valueLeft/valueRight);
+  //Serial.print("leftEye: ");
+  //Serial.println(valueLeft);
+  //Serial.print("rightEye: ");
+  //Serial.println(valueRight);
   
-  delay(1500);
+  ratioLR = valueLeft/valueRight;
+  Serial.print("Ratio: ");
+  Serial.println(ratioLR);
+
+  if (ratioLR <= 1.0) {
+    pos--;
+  } else if (ratioLR >= 1.2) {
+    pos++;
+  }
+  delay(50);
+  myservo.write(pos);
 }
